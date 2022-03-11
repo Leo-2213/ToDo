@@ -54,7 +54,7 @@ function App() {
             <Header />
             <CreateArea onAdd={addNote} />
             <div className="my-notes">
-               {notes.map((noteItem, index) => {
+               {notes.slice(notes.length-50).map((noteItem, index) => {
                   return (
                      <Note
                         key={index}
