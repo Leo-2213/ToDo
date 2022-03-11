@@ -11,9 +11,9 @@ function Note(props) {
 
    useEffect(() => {
       if (noteDate.completed) {
-         setButtonText("Complete");
-      } else {
          setButtonText("InComplete");
+      } else {
+         setButtonText("Complete");
       }
    }, [noteDate]);
 
