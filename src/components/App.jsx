@@ -1,44 +1,75 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import Note from "./Note";
 import CreateArea from "./CreateArea";
+import axios from "axios";
+import { Container } from "reactstrap";
 
 function App() {
-  const [notes, setNotes] = useState([]);
+   const [notes, setNotes] = useState([]);
 
-  function addNote(newNote) {
-    setNotes(prevNotes => {
-      return [...prevNotes, newNote];
-    });
-  }
+   useEffect(() => {
+      axios
+         .get("https://jsonplaceholder.typicode.com/todos")
+         .then(function (response) {
+            setNotes(response.data);
+         });
+   }, []);
 
-  function deleteNote(id) {
-    setNotes(prevNotes => {
-      return prevNotes.filter((noteItem, index) => {
-        return index !== id;
+   function addNote(newNote) {
+      setNotes((prevNotes) => {
+         return [...prevNotes, newNote];
       });
-    });
-  }
+   }
 
-  return (
-    <div>
-      <Header />
-      <CreateArea onAdd={addNote} />
-      {notes.map((noteItem, index) => {
-        return (
-          <Note
-            key={index}
-            id={index}
-            title={noteItem.title}
-            content={noteItem.content}
-            onDelete={deleteNote}
-          />
-        );
-      })}
-      <Footer />
-    </div>
-  );
+   function deleteNote(id) {
+      setNotes((prevNotes) => {
+         return prevNotes.filter((noteItem, index) => {
+            return index !== id;
+         });
+      });
+   }
+
+   function completed(id) {
+      let tempNotes = notes.map((note) => {
+         if (note.id === id) {
+            return {
+               ...note,
+               completed: !note.completed,
+            };
+         } else {
+            return {
+               ...note,
+            };
+         }
+      });
+
+      setNotes(tempNotes);
+   }
+
+   return (
+      <div style={{ backgroundColor: "rgb(17, 17, 17)", width: "100%" }}>
+         <Container>
+            <Header />
+            <CreateArea onAdd={addNote} />
+            <div className="my-notes">
+               {notes.map((noteItem, index) => {
+                  return (
+                     <Note
+                        key={index}
+                        id={index}
+                        completed={completed}
+                        noteDate={noteItem}
+                        onDelete={deleteNote}
+                     />
+                  );
+               })}
+            </div>
+            <Footer />
+         </Container>
+      </div>
+   );
 }
 
 export default App;
